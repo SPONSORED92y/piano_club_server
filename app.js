@@ -10,6 +10,9 @@ const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 const compression = require("compression");
 const { body, validationResult } = require("express-validator");
+//router and controller
+var router = express.Router();
+const controller = require("./controllers/controller");
 
 const app = express();
 // passport
@@ -56,20 +59,24 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 //route
-// app.use('/', indexRouter);
+app.use('/', router);
+router.post('/Login', controller.LoginPost)
+router.post('/SignUp', controller.SignUpPost)
+router.post('/Reserve', controller.ReserveGet)
+router.post('/Reserve', controller.ReservePost)
 
+/*
 app.get('/', (req, res) => {
     // res.json({});
     res.render('form')
 });
-
 chat_post = (req, res, next) => {
     console.log("receive post");
     console.log(req.body);
     res.json(req.body);
 }
-
 app.post('/', chat_post);
+*/
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
