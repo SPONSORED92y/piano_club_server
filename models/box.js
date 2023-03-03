@@ -1,28 +1,34 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const BoxDchema = new Schema({
-    data: [
-        [
-            [
-                [
-                    {
-                        state: {
-                            Type: String,
-                            required: true,
-                            enum: ["Available", "Occupied", "Unavailable"],
-                            defaullt: ["Available"]
-                        },
-                        user: {
-                            Type: String,
-                            required: true,
-                            defaullt: [""]
-                        }
-                    }
-                ]
-            ]
-        ]
-    ],
+const BoxSchema = new Schema({
+    state: {
+        type: String,
+        required: true,
+        enum: ["Available", "Occupied", "Unavailable"],
+        default: ["Available"]
+    },
+    user: {
+        type: String,
+        required: true,
+        default: [""]
+    }
 });
 
-module.exports = mongoose.model("Box", Box);
+const DaySchema = new Schema({
+    day: [BoxSchema]
+});
+
+const SevenDaySchema = new Schema({
+    sevenDay: [DaySchema]
+});
+
+const RoomSchema = new Schema({
+    room: [SevenDaySchema]
+});
+
+const Weekchema = new Schema({
+    week: [RoomSchema]
+});
+
+module.exports = mongoose.model("Box", BoxSchema);

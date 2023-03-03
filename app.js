@@ -1,82 +1,44 @@
-var createError = require('http-errors');
 const express = require('express');
-const session = require("express-session");
+var createError = require('http-errors');
+require('./passport');
+const passport = require('passport');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
-const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcryptjs");
 const compression = require("compression");
+var cors = require('cors')
 const { body, validationResult } = require("express-validator");
 //router and controller
-var router = express.Router();
 const controller = require("./controllers/controller");
+//monogo connection
+mongoose.set('strictQuery', false);
+const mongoDb = "mongodb+srv://jasonsu92y:jason789523@cluster0.xqgtijc.mongodb.net/piano_club_server?retryWrites=true&w=majority";
+mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 
 const app = express();
-// passport
-passport.use(
-    new LocalStrategy((username, password, done) => {
-        User.findOne({ username: username }, (err, user) => {
-            if (err) {
-                return done(err);
-            }
-            if (!user) {
-                return done(null, false, { message: "Incorrect username" });
-            }
-            bcrypt.compare(password, user.password, (err, res) => {
-                if (res) {
-                    return done(null, user);
-                } else {
-                    // passwords do not match!
-                    return done(null, false, { message: "Incorrect password" });
-                }
-            });
-        });
-    })
-);
-passport.serializeUser(function (user, done) {
-    done(null, user.id);
-});
 
-passport.deserializeUser(function (id, done) {
-    User.findById(id, function (err, user) {
-        done(err, user);
-    });
-});
-app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(express.urlencoded({ extended: false }));
+// parse application/x-www-form-urlencoded
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.use(compression()); // Compress all routes
+// app.use(compression()); // Compress all routes
 app.use(logger('dev'));
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: false }));
+// app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 //route
+var router = express.Router();
 app.use('/', router);
 router.post('/Login', controller.LoginPost)
 router.post('/SignUp', controller.SignUpPost)
 router.post('/Reserve', controller.ReserveGet)
 router.post('/Reserve', controller.ReservePost)
-
-/*
-app.get('/', (req, res) => {
-    // res.json({});
-    res.render('form')
-});
-chat_post = (req, res, next) => {
-    console.log("receive post");
-    console.log(req.body);
-    res.json(req.body);
-}
-app.post('/', chat_post);
-*/
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
