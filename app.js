@@ -16,7 +16,8 @@ const controller = require("./controllers/controller");
 mongoose.set('strictQuery', false);
 const mongoDb = "mongodb+srv://jasonsu92y:jason789523@cluster0.xqgtijc.mongodb.net/piano_club_server?retryWrites=true&w=majority";
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
-
+const Box = require("./models/box");
+const { doesNotMatch } = require('assert');
 const app = express();
 
 // parse application/x-www-form-urlencoded
@@ -33,12 +34,38 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 //route
+const populate = (req, res) => {
+    var arr = [];
+    for (var i = 0; i < 882; i++) {
+        arr.push("Available");
+    }
+    for (var i = 0; i < 882; i++) {
+        arr.push("jason");
+    }
+    arr[883] = "j";
+    arr[870] = "g";
+    arr[865] = "a";
+    arr[899] = "fd";
+    arr[1200] = "o";
+    arr[1223] = "889";
+    const box = new Box({
+        data: arr
+    }).save(err => {
+        if (err) {
+            console.log(err);
+        }
+    });
+    res.send("populated");
+}
+
+
 var router = express.Router();
 app.use('/', router);
 router.post('/Login', controller.LoginPost)
 router.post('/SignUp', controller.SignUpPost)
-router.post('/Reserve', controller.ReserveGet)
-router.post('/Reserve', controller.ReservePost)
+router.get('/Reserve', passport.authenticate('jwt', { session: false }), controller.ReserveGet)
+router.post('/Reserve', passport.authenticate('jwt', { session: false }), controller.ReservePost)
+router.get('/Populate', populate)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

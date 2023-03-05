@@ -35,7 +35,6 @@ exports.SignUpPost = (req, res, next) => {
                 department: req.body.department,
                 studentID: req.body.studentID,
                 role: req.body.role,
-
             }).save(err => {
                 if (err) {
                     return next(err);
@@ -48,7 +47,13 @@ exports.SignUpPost = (req, res, next) => {
 };
 
 exports.ReserveGet = (req, res) => {
-
+    Box.findOne()
+        .exec((err, listBox) => {
+            if (err) {
+                return next(err);
+            }
+            res.json(listBox);
+        })
 };
 
 exports.ReservePost = (req, res) => {
