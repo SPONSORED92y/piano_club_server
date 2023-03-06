@@ -57,5 +57,23 @@ exports.ReserveGet = (req, res) => {
 };
 
 exports.ReservePost = (req, res) => {
-
+    //might be array.map's issue
+    func = async () => {
+        const name = (req.body.mode == "Reserve") ? req.body.name : ""
+        const state = (req.body.mode == "Reserve") ? "Occupied" : "Available"
+        const box = await Box.findOne()
+        var updateData = await box.data.map((element, index) => {
+            if (index == req.body.index) {
+                element = state;
+            }
+            if (index == req.body.index + 882) {
+                return element = name;
+            }
+        })
+        Box.findOneAndUpdate({}, updateData)
+        res.json({ "messege": "success" });
+    }
+    func().catch(error => {
+        console.error('There was an error!', error);
+    });
 };
