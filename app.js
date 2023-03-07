@@ -40,15 +40,10 @@ const populate = (req, res) => {
         arr.push("Available");
     }
     for (var i = 0; i < 882; i++) {
-        arr.push("jason");
+        arr.push("");
     }
-    arr[883] = "j";
-    arr[870] = "g";
-    arr[865] = "a";
-    arr[899] = "fd";
-    arr[1200] = "o";
-    arr[1223] = "889";
     const box = new Box({
+        name: "reservationData",
         data: arr
     }).save(err => {
         if (err) {
