@@ -13,6 +13,7 @@ const UserSchema = new Schema({
         enum: ["Admin", "Member"],
         default: "Member",
     },
+    times: { type: Number, required: true }
 });
 
 module.exports = mongoose.model("User", UserSchema);

@@ -35,6 +35,7 @@ exports.SignUpPost = (req, res, next) => {
                 department: req.body.department,
                 studentID: req.body.studentID,
                 role: req.body.role,
+                times: 7,
             }).save(err => {
                 if (err) {
                     return next(err);
